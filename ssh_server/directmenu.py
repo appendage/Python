@@ -24,7 +24,7 @@ class DirectMenu():
         self.test = 1
         self.article = 10
  #       self.prompt = 'fort> '
-        self.asset = u"""\033[30;42m%s%s%s%s%s\r\033[0m""" % (self._id.ljust(10),self._name.ljust(20),self._ip.center(37),self._type.ljust(10),self._account.rjust(30))
+        self.asset = u"""\033[30;42m%s%s%s%s%s\r\033[0m""" % (self._id.center(10),self._name.ljust(20),self._ip.center(37),self._type.ljust(10),self._account.rjust(30))
 
         with open(self.FILE_NAME, 'r', encoding='UTF-8') as f:
             self.data = json.load(f)
@@ -105,7 +105,7 @@ class DirectMenu():
             fortAccounts = re.split("\||:",fortAccounts)[1::2]
             sequence = sequence + 1
             sequence1 = str(sequence)
-            asse = u"""%s %s %s %s %s""" % (self.string_ljust(sequence1,10),self.string_ljust(fortResourceName,30),fortResourceIp.center(27),self.string_ljust(fortResourceTypeName,30),fortAccounts)
+            asse = u""" %s%s%s%s%s""" % (sequence1.center(10),self.string_ljust(fortResourceName,30),fortResourceIp.center(27),self.string_ljust(fortResourceTypeName,30),fortAccounts)
             print(asse)   
     def get_input(self,prompt='fort> '):
         '''获取用户输入并返回 '''
