@@ -1,5 +1,5 @@
-# ~*~ coding: utf-8 ~*~
 #!/usr/bin/env python3
+# ~*~ coding: utf-8 ~*~
 
 import json
 import sys
@@ -19,12 +19,12 @@ class DirectMenu():
         self._ip = "IP"
         self._type = "类型"
         self._account = "账号"
-        self.FILE_NAME = "E:\github\Python\ssh_server\data.json"
+        self.FILE_NAME = "data.json"
         self.page = 1
         self.test = 1
         self.article = 10
  #       self.prompt = 'fort> '
-        self.asset = u"""\033[30;42m%s%s%s%s%s\r\033[0m""" % (self._id.center(10),self._name.ljust(20),self._ip.center(37),self._type.ljust(10),self._account.rjust(30))
+        self.asset = u"""\033[30;42m %s%s%s%s%s\r\033[0m""" % (self.string_ljust(self._id,10),self.string_ljust(self._name,30),self.string_ljust(self._ip,27),self.string_ljust(self._type,30),self.string_ljust(self._account,40))
 
         with open(self.FILE_NAME, 'r', encoding='UTF-8') as f:
             self.data = json.load(f)
@@ -105,7 +105,7 @@ class DirectMenu():
             fortAccounts = re.split("\||:",fortAccounts)[1::2]
             sequence = sequence + 1
             sequence1 = str(sequence)
-            asse = u""" %s%s%s%s%s""" % (sequence1.center(10),self.string_ljust(fortResourceName,30),fortResourceIp.center(27),self.string_ljust(fortResourceTypeName,30),fortAccounts)
+            asse = u""" %s%s%s%s%s""" % (self.string_ljust(sequence1,10),self.string_ljust(fortResourceName,30),self.string_ljust(fortResourceIp,27),self.string_ljust(fortResourceTypeName,30),self.string_ljust(fortAccounts,10))
             print(asse)   
     def get_input(self,prompt='fort> '):
         '''获取用户输入并返回 '''
