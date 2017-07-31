@@ -6,12 +6,12 @@ import sys
 import re
 import os
 import re
-import socket
 import getpass
+import platform
 import logging
 
 class DirectMenu():
-
+ 
     def __init__(self):
         self.username = getpass.getuser()
         self._id = "序号"
@@ -19,14 +19,14 @@ class DirectMenu():
         self._ip = "IP"
         self._type = "类型"
         self._account = "账号"
-        self.FILE_NAME = "data.json"
+        self.FILE_NAME = "E:\github\Python\ssh_server\data.json"
         self.page = 1
         self.test = 1
         self.article = 10
  #       self.prompt = 'fort> '
-        self.asset = u"""\033[30;42m%s%s%s%s%s\r\033[0m""" % (self._id.center(20),self._name.center(20),self._ip.center(25),self._type.center(20),self._account.center(20))
+        self.asset = u"""\033[30;42m%s%s%s%s%s\r\033[0m""" % (self._id.ljust(10),self._name.ljust(20),self._ip.center(37),self._type.ljust(10),self._account.rjust(30))
 
-        with open(self.FILE_NAME, 'r') as f:
+        with open(self.FILE_NAME, 'r', encoding='UTF-8') as f:
             self.data = json.load(f)
 
     def welcome(self):
@@ -98,15 +98,15 @@ class DirectMenu():
         sequence = start
         for line in range(len(data[start:end])):
             fortResourceName = data[start:end][line]['fortResourceName']
+            fortResourceName.encode('utf-8')
             fortResourceIp = data[start:end][line]['fortResourceIp']
             fortResourceTypeName = data[start:end][line]['fortResourceTypeName']
             fortAccounts = data[start:end][line]['fortAccounts']
             fortAccounts = re.split("\||:",fortAccounts)[1::2]
             sequence = sequence + 1
             sequence1 = str(sequence)
-            asse = u"""%s%s%s%s%s""" % (sequence1.center(23),fortResourceName.center(21),fortResourceIp.center(27),fortResourceTypeName.center(20),fortAccounts)
-            print(asse)
-    
+            asse = u"""%s %s %s %s %s""" % (self.string_ljust(sequence1,10),self.string_ljust(fortResourceName,30),fortResourceIp.center(27),self.string_ljust(fortResourceTypeName,30),fortAccounts)
+            print(asse)   
     def get_input(self,prompt='fort> '):
         '''获取用户输入并返回 '''
         input_data = input(prompt)
@@ -119,8 +119,11 @@ class DirectMenu():
         fortAccounts = re.split("\||:",fortAccounts)[1::2]
         fortResourceIp = data[option - 1]['fortResourceIp']
         if (len(fortAccounts)) > 1:
+            print("\033[32m有多个用户授权，请选择其中一个\033[0m")
             system_user = self.choose_system_user(fortAccounts)
-            print(system_user,fortResourceIp)
+            
+            if system_user:              
+                print(system_user,fortResourceIp)
             self.dispatch()
         else:
             print(fortAccounts)
@@ -133,7 +136,7 @@ class DirectMenu():
                 system_user = system_users[int(option)]
                 return system_user
             elif option in ['q','Q']:
-                return None
+                return
             else:
                 print('\033[31mNo system user match, please input again\033[0m')
 
@@ -179,17 +182,67 @@ class DirectMenu():
             #print("no search")
             self.directmenu_display(data,article)      
         
-    
+    def is_chinese(self,uchar):
+
+        """判断一个unicode是否是汉字"""
+
+        if uchar >= u'\u4e00' and uchar <= u'\u9fa5':
+
+            return True
+
+        else:
+
+            return False
+
+ 
+
+    def align(self, text, width, just = "left" ):  
+        stext = str(text)
+        utext = text
+        cn_count = 0
+
+        for u in utext:
+
+            if self.is_chinese(u):
+
+                cn_count += 2 # 计算中文字符占用的宽度
+
+            else:
+
+                cn_count += 1  # 计算英文字符占用的宽度
+
+        if just == "right":
+
+            return " " * (width - cn_count ) + stext  
+
+        elif just == "left":
+
+            return stext + " " * ( width - cn_count )
+
+
+    def string_ljust(self, text, width ):
+
+        return self.align( text, width, "left" )
+
+
+    def string_rjust(self, text, width ):
+
+        return align( text, width, "right" )
+
     def run(self):
         while True:
-            try:
+            #try:
+            system_version = platform.system()
+            if system_version == 'Windows':
+                os.system('cls')
+            elif system_version == 'Linux':
                 os.system('clear')
-                self.welcome()
-                self.directmenu_display(self.data,self.article,self.page)
-                self.dispatch()
-            except socket.error:
-                del self
-                break
+            self.welcome()
+            self.directmenu_display(self.data,self.article,self.page)
+            self.dispatch()
+            #except:
+            #    del self
+            #    break
 
 
 if __name__ == '__main__':
